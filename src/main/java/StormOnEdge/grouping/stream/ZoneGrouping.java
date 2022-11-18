@@ -1,5 +1,7 @@
 package StormOnEdge.grouping.stream;
 
+import java.lang.ClassCastException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +50,13 @@ public abstract class ZoneGrouping implements CustomStreamGrouping {
 
     for (Integer source : context.getComponentTasks(stream.get_componentId())) {
 //      LOG.info("Source: " + source);
-      List<Integer> temp = (List<Integer>) supervisorTaskMap.get(taskSupNameMap.get(source));
+      List<Integer> temp;
+      try {
+        temp = (List<Integer>) supervisorTaskMap.get(taskSupNameMap.get(source));
+      } catch (ClassCastException cce) {
+        temp = new ArrayList<Integer>();
+        temp.add((Integer) supervisorTaskMap.get(taskSupNameMap.get(source)));
+      }
       if(temp == null || temp.isEmpty())
         continue;
       LOG.info("Source: " + source);
